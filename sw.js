@@ -1,7 +1,7 @@
 // PlantVillage PWA Service Worker
 // Provides offline support by caching the model and assets
 
-const CACHE_NAME = 'plantvillage-v2'; // Updated: 128x128 model
+const CACHE_NAME = 'plantvillage-v3'; // Updated: Fixed 128x128 model (was still 256x256)
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
