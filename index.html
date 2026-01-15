@@ -181,6 +181,30 @@
             border: 1px solid #334155;
         }
 
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn-row .btn {
+            flex: 1;
+            margin-top: 0;
+            padding: 14px 12px;
+            font-size: 0.9rem;
+        }
+
+        .btn-camera {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+
+        .btn-gallery {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+            border: 1px solid #334155;
+        }
+
         .results {
             margin-top: 30px;
             display: none;
@@ -327,11 +351,25 @@
 
         <div class="upload-zone" id="upload-zone">
             <div class="upload-icon">📸</div>
-            <p class="upload-text">Tap to take photo or upload image</p>
+            <p class="upload-text">Take a photo or choose from gallery</p>
             <p class="upload-hint">Supports JPG, PNG images</p>
             <img id="preview-image" alt="Preview">
         </div>
-        <input type="file" id="file-input" accept="image/*" capture="environment">
+        
+        <!-- Two separate inputs: one for camera, one for gallery -->
+        <input type="file" id="camera-input" accept="image/*" capture="environment">
+        <input type="file" id="gallery-input" accept="image/*">
+
+        <div class="btn-row">
+            <button class="btn btn-camera" id="camera-btn">
+                <span>📷</span>
+                <span>Camera</span>
+            </button>
+            <button class="btn btn-gallery" id="gallery-btn">
+                <span>🖼️</span>
+                <span>Gallery</span>
+            </button>
+        </div>
 
         <button class="btn btn-primary" id="analyze-btn" disabled>
             <span>🔍</span>
@@ -428,7 +466,10 @@
         const statusDot = document.getElementById('status-dot');
         const statusText = document.getElementById('status-text');
         const uploadZone = document.getElementById('upload-zone');
-        const fileInput = document.getElementById('file-input');
+        const cameraInput = document.getElementById('camera-input');
+        const galleryInput = document.getElementById('gallery-input');
+        const cameraBtn = document.getElementById('camera-btn');
+        const galleryBtn = document.getElementById('gallery-btn');
         const previewImage = document.getElementById('preview-image');
         const analyzeBtn = document.getElementById('analyze-btn');
         const loading = document.getElementById('loading');
@@ -568,7 +609,9 @@
         }
 
         // Event handlers
-        uploadZone.addEventListener('click', () => fileInput.click());
+        cameraBtn.addEventListener('click', () => cameraInput.click());
+        galleryBtn.addEventListener('click', () => galleryInput.click());
+        uploadZone.addEventListener('click', () => galleryInput.click());
         
         uploadZone.addEventListener('dragover', (e) => {
             e.preventDefault();
@@ -586,7 +629,12 @@
             if (file) handleImage(file);
         });
         
-        fileInput.addEventListener('change', (e) => {
+        cameraInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) handleImage(file);
+        });
+        
+        galleryInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) handleImage(file);
         });
