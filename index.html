@@ -5,74 +5,111 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#1a1a2e">
+    <meta name="theme-color" content="#000000">
     <title>PlantVillage AI - Disease Detection</title>
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon-192.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /*
+         * PlantVillage PWA - Matching GUI Theme
+         * Palette: Zinc (Black/Gray/White) + Blue Accent
+         */
         :root {
-            --bg-primary: #0f0f1a;
-            --bg-secondary: #1a1a2e;
-            --bg-card: #16213e;
-            --accent: #4ade80;
-            --accent-glow: rgba(74, 222, 128, 0.3);
-            --text-primary: #ffffff;
-            --text-secondary: #94a3b8;
-            --danger: #ef4444;
+            /* Primitive Colors - Zinc Scale */
+            --c-black: #000000;
+            --c-zinc-950: #09090b;
+            --c-zinc-900: #18181b;
+            --c-zinc-800: #27272a;
+            --c-zinc-700: #3f3f46;
+            --c-zinc-600: #52525b;
+            --c-zinc-400: #a1a1aa;
+            --c-zinc-200: #e4e4e7;
+            --c-zinc-100: #f4f4f5;
+            --c-white: #ffffff;
+
+            /* Accent Color */
+            --c-accent: #3b82f6;
+            --c-accent-hover: #2563eb;
+            --c-accent-dim: rgba(59, 130, 246, 0.15);
+
+            /* Semantic Tokens */
+            --bg-app: var(--c-black);
+            --bg-panel: var(--c-zinc-900);
+            --bg-surface: var(--c-zinc-950);
+            --bg-hover: var(--c-zinc-800);
+            
+            --border-base: var(--c-zinc-800);
+            --border-highlight: var(--c-zinc-700);
+
+            --text-main: var(--c-zinc-100);
+            --text-secondary: var(--c-zinc-400);
+
+            /* Status Colors */
+            --success: #10b981;
             --warning: #f59e0b;
+            --error: #ef4444;
+
+            /* Component */
+            --card-radius: 12px;
+            --btn-radius: 8px;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            border-color: var(--border-base);
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-app);
+            color: var(--text-main);
             min-height: 100vh;
             padding: 20px;
-            padding-top: env(safe-area-inset-top, 20px);
-            padding-bottom: env(safe-area-inset-bottom, 20px);
+            padding-top: max(20px, env(safe-area-inset-top));
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            -webkit-font-smoothing: antialiased;
         }
 
         .container {
-            max-width: 500px;
+            max-width: 480px;
             margin: 0 auto;
         }
 
+        /* Header */
         header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 32px;
         }
 
         h1 {
-            font-size: 1.8rem;
+            font-size: 1.75rem;
             font-weight: 700;
-            margin-bottom: 8px;
-            background: linear-gradient(135deg, #4ade80, #22d3ee);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--c-white);
+            margin-bottom: 4px;
         }
 
         .subtitle {
             color: var(--text-secondary);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+            font-weight: 400;
         }
 
         .status-bar {
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
             gap: 8px;
-            margin-top: 15px;
-            padding: 10px 16px;
-            background: var(--bg-secondary);
+            margin-top: 16px;
+            padding: 8px 16px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-base);
             border-radius: 20px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
         }
 
         .status-dot {
@@ -84,12 +121,12 @@
         }
 
         .status-dot.ready {
-            background: var(--accent);
+            background: var(--success);
             animation: none;
         }
 
         .status-dot.error {
-            background: var(--danger);
+            background: var(--error);
             animation: none;
         }
 
@@ -98,76 +135,93 @@
             50% { opacity: 0.5; }
         }
 
+        /* Card */
+        .card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-base);
+            border-radius: var(--card-radius);
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+
+        /* Upload Zone */
         .upload-zone {
-            margin-top: 30px;
+            background: var(--bg-surface);
+            border: 2px dashed var(--border-base);
+            border-radius: var(--card-radius);
             padding: 40px 20px;
-            border: 2px dashed #334155;
-            border-radius: 16px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s ease;
-            background: var(--bg-secondary);
+            transition: all 0.2s;
         }
 
         .upload-zone:hover, .upload-zone.dragover {
-            border-color: var(--accent);
-            background: rgba(74, 222, 128, 0.05);
+            border-color: var(--c-accent);
+            background: var(--c-accent-dim);
         }
 
         .upload-zone.has-image {
             padding: 20px;
+            border-style: solid;
         }
 
         .upload-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
+            font-size: 40px;
+            margin-bottom: 12px;
         }
 
         .upload-text {
-            color: var(--text-secondary);
-            margin-bottom: 10px;
+            color: var(--text-main);
+            font-weight: 500;
+            margin-bottom: 4px;
         }
 
         .upload-hint {
             font-size: 0.8rem;
-            color: #64748b;
+            color: var(--text-secondary);
         }
 
         #preview-image {
             max-width: 100%;
-            max-height: 300px;
-            border-radius: 12px;
+            max-height: 280px;
+            border-radius: 8px;
             display: none;
         }
 
-        #file-input {
+        #camera-input, #gallery-input {
             display: none;
+        }
+
+        /* Buttons */
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
         }
 
         .btn {
-            width: 100%;
-            padding: 16px;
-            margin-top: 20px;
+            flex: 1;
+            padding: 14px 16px;
             border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
+            border-radius: var(--btn-radius);
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #4ade80, #22c55e);
-            color: #000;
+            background-color: var(--c-white);
+            color: var(--c-black);
         }
 
         .btn-primary:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px var(--accent-glow);
+            background-color: var(--c-zinc-200);
         }
 
         .btn-primary:disabled {
@@ -176,109 +230,109 @@
         }
 
         .btn-secondary {
-            background: var(--bg-card);
-            color: var(--text-primary);
-            border: 1px solid #334155;
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border-base);
         }
 
-        .btn-row {
-            display: flex;
-            gap: 12px;
-            margin-top: 20px;
+        .btn-secondary:hover:not(:disabled) {
+            background-color: var(--bg-hover);
+            border-color: var(--border-highlight);
         }
 
-        .btn-row .btn {
-            flex: 1;
-            margin-top: 0;
-            padding: 14px 12px;
-            font-size: 0.9rem;
-        }
-
-        .btn-camera {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        .btn-accent {
+            background-color: var(--c-accent);
             color: white;
         }
 
-        .btn-gallery {
-            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-            color: white;
-            border: 1px solid #334155;
+        .btn-accent:hover:not(:disabled) {
+            background-color: var(--c-accent-hover);
         }
 
+        .btn-accent:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-full {
+            width: 100%;
+            margin-top: 16px;
+        }
+
+        /* Results */
         .results {
-            margin-top: 30px;
             display: none;
         }
 
         .results.visible {
             display: block;
-            animation: fadeIn 0.5s ease;
+            animation: fadeIn 0.3s ease;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
-        }
-
-        .result-card {
-            background: var(--bg-card);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 15px;
         }
 
         .result-header {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 15px;
+            margin-bottom: 16px;
         }
 
         .result-icon {
             font-size: 32px;
         }
 
-        .result-title {
-            font-size: 1.1rem;
-            font-weight: 600;
+        .result-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
         }
 
         .result-class {
-            color: var(--accent);
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--c-white);
         }
 
-        .confidence-bar {
+        /* Progress Bar */
+        .progress-bar {
+            background: var(--bg-surface);
             height: 8px;
-            background: var(--bg-secondary);
-            border-radius: 4px;
+            border-radius: 99px;
             overflow: hidden;
-            margin-top: 10px;
         }
 
-        .confidence-fill {
+        .progress-bar-fill {
+            background: var(--c-accent);
             height: 100%;
-            background: linear-gradient(90deg, #4ade80, #22d3ee);
-            border-radius: 4px;
             transition: width 0.5s ease;
         }
 
-        .confidence-text {
+        .progress-label {
             display: flex;
             justify-content: space-between;
             margin-top: 8px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--text-secondary);
         }
 
-        .top-predictions {
-            margin-top: 20px;
+        /* Predictions List */
+        .predictions-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 12px;
         }
 
         .prediction-item {
             display: flex;
             justify-content: space-between;
             padding: 10px 0;
-            border-bottom: 1px solid #334155;
+            border-bottom: 1px solid var(--border-base);
+            font-size: 0.85rem;
         }
 
         .prediction-item:last-child {
@@ -286,37 +340,40 @@
         }
 
         .prediction-name {
-            font-size: 0.9rem;
+            color: var(--text-main);
         }
 
         .prediction-prob {
-            font-size: 0.9rem;
             color: var(--text-secondary);
         }
 
+        /* Info Section */
         .info-section {
-            margin-top: 30px;
-            padding: 20px;
-            background: var(--bg-secondary);
-            border-radius: 12px;
+            margin-top: 24px;
+            padding: 16px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-base);
+            border-radius: var(--card-radius);
         }
 
         .info-section h3 {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
+            font-weight: 500;
             color: var(--text-secondary);
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .info-section p {
-            font-size: 0.85rem;
-            color: #64748b;
+            font-size: 0.8rem;
+            color: var(--c-zinc-600);
             line-height: 1.5;
         }
 
+        /* Loading */
         .loading {
             display: none;
             text-align: center;
-            padding: 20px;
+            padding: 24px;
         }
 
         .loading.visible {
@@ -324,13 +381,18 @@
         }
 
         .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--bg-card);
-            border-top-color: var(--accent);
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--border-base);
+            border-top-color: var(--c-accent);
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
+            margin: 0 auto 12px;
+        }
+
+        .loading p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
         }
 
         @keyframes spin {
@@ -341,7 +403,7 @@
 <body>
     <div class="container">
         <header>
-            <h1>🌿 PlantVillage AI</h1>
+            <h1>PlantVillage AI</h1>
             <p class="subtitle">Plant Disease Detection</p>
             <div class="status-bar">
                 <div class="status-dot" id="status-dot"></div>
@@ -349,32 +411,32 @@
             </div>
         </header>
 
-        <div class="upload-zone" id="upload-zone">
-            <div class="upload-icon">📸</div>
-            <p class="upload-text">Take a photo or choose from gallery</p>
-            <p class="upload-hint">Supports JPG, PNG images</p>
-            <img id="preview-image" alt="Preview">
-        </div>
-        
-        <!-- Two separate inputs: one for camera, one for gallery -->
-        <input type="file" id="camera-input" accept="image/*" capture="environment">
-        <input type="file" id="gallery-input" accept="image/*">
+        <div class="card">
+            <div class="upload-zone" id="upload-zone">
+                <div class="upload-icon">📷</div>
+                <p class="upload-text">Select an image</p>
+                <p class="upload-hint">Take a photo or choose from gallery</p>
+                <img id="preview-image" alt="Preview">
+            </div>
+            
+            <input type="file" id="camera-input" accept="image/*" capture="environment">
+            <input type="file" id="gallery-input" accept="image/*">
 
-        <div class="btn-row">
-            <button class="btn btn-camera" id="camera-btn">
-                <span>📷</span>
-                <span>Camera</span>
-            </button>
-            <button class="btn btn-gallery" id="gallery-btn">
-                <span>🖼️</span>
-                <span>Gallery</span>
+            <div class="btn-row">
+                <button class="btn btn-secondary" id="camera-btn">
+                    <span>📷</span>
+                    <span>Camera</span>
+                </button>
+                <button class="btn btn-secondary" id="gallery-btn">
+                    <span>🖼️</span>
+                    <span>Gallery</span>
+                </button>
+            </div>
+
+            <button class="btn btn-primary btn-full" id="analyze-btn" disabled>
+                Analyze Plant
             </button>
         </div>
-
-        <button class="btn btn-primary" id="analyze-btn" disabled>
-            <span>🔍</span>
-            <span>Analyze Plant</span>
-        </button>
 
         <div class="loading" id="loading">
             <div class="spinner"></div>
@@ -382,36 +444,34 @@
         </div>
 
         <div class="results" id="results">
-            <div class="result-card">
+            <div class="card">
                 <div class="result-header">
                     <span class="result-icon" id="result-icon">🌱</span>
                     <div>
-                        <p class="result-title">Detected:</p>
+                        <p class="result-label">Detected</p>
                         <p class="result-class" id="result-class">Loading...</p>
                     </div>
                 </div>
-                <div class="confidence-bar">
-                    <div class="confidence-fill" id="confidence-fill" style="width: 0%"></div>
+                <div class="progress-bar">
+                    <div class="progress-bar-fill" id="confidence-fill" style="width: 0%"></div>
                 </div>
-                <div class="confidence-text">
+                <div class="progress-label">
                     <span>Confidence</span>
                     <span id="confidence-value">0%</span>
                 </div>
             </div>
 
-            <div class="result-card">
-                <p class="result-title" style="margin-bottom: 10px">Top 5 Predictions</p>
-                <div class="top-predictions" id="top-predictions">
-                    <!-- Filled by JS -->
-                </div>
+            <div class="card">
+                <p class="predictions-title">Top 5 Predictions</p>
+                <div id="top-predictions"></div>
             </div>
         </div>
 
         <div class="info-section">
-            <h3>About This App</h3>
+            <h3>About</h3>
             <p>
-                This app uses a CNN trained on the PlantVillage dataset to detect 38 plant diseases.
-                All processing happens locally on your device - no internet required after initial load.
+                AI-powered plant disease detection. After first load, works completely offline.
+                All processing happens locally on your device.
             </p>
         </div>
     </div>
@@ -483,7 +543,6 @@
             try {
                 statusText.textContent = 'Loading model...';
                 
-                // Use WASM backend for better compatibility
                 ort.env.wasm.wasmPaths = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.17.0/dist/';
                 
                 session = await ort.InferenceSession.create('./model.onnx', {
@@ -492,8 +551,7 @@
                 });
                 
                 statusDot.classList.add('ready');
-                statusText.textContent = 'Model ready (offline capable)';
-                console.log('Model loaded successfully');
+                statusText.textContent = 'Ready (works offline)';
             } catch (error) {
                 console.error('Failed to load model:', error);
                 statusDot.classList.add('error');
@@ -506,19 +564,13 @@
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             
-            // Resize to 256x256
             canvas.width = 256;
             canvas.height = 256;
-            
-            // Draw and scale image
             ctx.drawImage(imageElement, 0, 0, 256, 256);
             
-            // Get pixel data
             const imageData = ctx.getImageData(0, 0, 256, 256);
             const pixels = imageData.data;
             
-            // Convert to float tensor [1, 3, 256, 256]
-            // Normalize with ImageNet mean/std (approximate)
             const floatData = new Float32Array(3 * 256 * 256);
             const mean = [0.485, 0.456, 0.406];
             const std = [0.229, 0.224, 0.225];
@@ -526,8 +578,6 @@
             for (let y = 0; y < 256; y++) {
                 for (let x = 0; x < 256; x++) {
                     const srcIdx = (y * 256 + x) * 4;
-                    
-                    // RGB channels
                     for (let c = 0; c < 3; c++) {
                         const dstIdx = c * 256 * 256 + y * 256 + x;
                         const value = pixels[srcIdx + c] / 255.0;
@@ -539,7 +589,6 @@
             return new ort.Tensor('float32', floatData, [1, 3, 256, 256]);
         }
 
-        // Softmax function
         function softmax(arr) {
             const max = Math.max(...arr);
             const exp = arr.map(x => Math.exp(x - max));
@@ -547,7 +596,6 @@
             return exp.map(x => x / sum);
         }
 
-        // Run inference
         async function runInference() {
             if (!session || !imageLoaded) return;
             
@@ -556,24 +604,16 @@
             analyzeBtn.disabled = true;
             
             try {
-                // Preprocess image
                 const inputTensor = await preprocessImage(previewImage);
-                
-                // Run inference
                 const outputs = await session.run({ image: inputTensor });
                 const logits = outputs.logits.data;
-                
-                // Apply softmax
                 const probs = softmax(Array.from(logits));
                 
-                // Get top 5 predictions
                 const indexed = probs.map((p, i) => ({ prob: p, idx: i }));
                 indexed.sort((a, b) => b.prob - a.prob);
                 const top5 = indexed.slice(0, 5);
                 
-                // Display results
                 displayResults(top5);
-                
             } catch (error) {
                 console.error('Inference error:', error);
                 alert('Error analyzing image: ' + error.message);
@@ -583,20 +623,17 @@
             }
         }
 
-        // Display results
         function displayResults(top5) {
             const topResult = top5[0];
             const className = CLASS_NAMES[topResult.idx];
             const confidence = (topResult.prob * 100).toFixed(1);
             
-            // Determine if healthy
             const isHealthy = className.toLowerCase().includes('healthy');
             document.getElementById('result-icon').textContent = isHealthy ? '✅' : '⚠️';
             document.getElementById('result-class').textContent = className;
             document.getElementById('confidence-fill').style.width = confidence + '%';
             document.getElementById('confidence-value').textContent = confidence + '%';
             
-            // Top 5 predictions
             const predictionsDiv = document.getElementById('top-predictions');
             predictionsDiv.innerHTML = top5.map(p => `
                 <div class="prediction-item">
@@ -656,14 +693,13 @@
         
         analyzeBtn.addEventListener('click', runInference);
 
-        // Register service worker for offline support
+        // Service worker
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js')
-                .then(reg => console.log('Service Worker registered'))
-                .catch(err => console.error('SW registration failed:', err));
+                .then(() => console.log('SW registered'))
+                .catch(err => console.error('SW error:', err));
         }
 
-        // Initialize
         initModel();
     </script>
 </body>
