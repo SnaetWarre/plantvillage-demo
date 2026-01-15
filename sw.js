@@ -1,7 +1,7 @@
 // PlantVillage PWA Service Worker
 // Provides offline support by caching the model and assets
 
-const CACHE_NAME = 'plantvillage-v4'; // Fixed class label ordering to match training
+const CACHE_NAME = 'plantvillage-v5'; // Added debug logging for tensor stats
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',

@@ -608,6 +608,17 @@
             
             try {
                 const inputTensor = await preprocessImage(previewImage);
+                
+                // Debug: log tensor statistics
+                const data = inputTensor.data;
+                let min = Infinity, max = -Infinity, sum = 0;
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i] < min) min = data[i];
+                    if (data[i] > max) max = data[i];
+                    sum += data[i];
+                }
+                console.log(`Tensor stats: min=${min.toFixed(3)}, max=${max.toFixed(3)}, mean=${(sum/data.length).toFixed(3)}`);
+                
                 const outputs = await session.run({ image: inputTensor });
                 const logits = outputs.logits.data;
                 const probs = softmax(Array.from(logits));
