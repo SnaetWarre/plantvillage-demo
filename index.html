@@ -480,46 +480,46 @@
     <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.17.0/dist/ort.min.js"></script>
     
     <script>
-        // Class names (38 classes from PlantVillage)
+        // Class names (38 classes from PlantVillage) - MUST match training order (alphabetical)!
         const CLASS_NAMES = [
-            "Apple - Apple scab",
-            "Apple - Black rot", 
-            "Apple - Cedar apple rust",
-            "Apple - Healthy",
-            "Blueberry - Healthy",
-            "Cherry - Powdery mildew",
-            "Cherry - Healthy",
-            "Corn - Cercospora leaf spot",
-            "Corn - Common rust",
-            "Corn - Northern Leaf Blight",
-            "Corn - Healthy",
-            "Grape - Black rot",
-            "Grape - Esca (Black Measles)",
-            "Grape - Leaf blight",
-            "Grape - Healthy",
-            "Orange - Citrus greening",
-            "Peach - Bacterial spot",
-            "Peach - Healthy",
-            "Pepper - Bacterial spot",
-            "Pepper - Healthy",
-            "Potato - Early blight",
-            "Potato - Late blight",
-            "Potato - Healthy",
-            "Raspberry - Healthy",
-            "Soybean - Healthy",
-            "Squash - Powdery mildew",
-            "Strawberry - Leaf scorch",
-            "Strawberry - Healthy",
-            "Tomato - Bacterial spot",
-            "Tomato - Early blight",
-            "Tomato - Late blight",
-            "Tomato - Leaf Mold",
-            "Tomato - Septoria leaf spot",
-            "Tomato - Spider mites",
-            "Tomato - Target Spot",
-            "Tomato - Yellow Leaf Curl Virus",
-            "Tomato - Mosaic virus",
-            "Tomato - Healthy"
+            "Apple - Apple scab",                    // 0
+            "Apple - Black rot",                     // 1
+            "Apple - Cedar apple rust",              // 2
+            "Apple - Healthy",                       // 3
+            "Blueberry - Healthy",                   // 4
+            "Cherry - Healthy",                      // 5  (healthy BEFORE Powdery - alphabetical!)
+            "Cherry - Powdery mildew",               // 6
+            "Corn - Cercospora leaf spot",           // 7
+            "Corn - Common rust",                    // 8
+            "Corn - Healthy",                        // 9  (healthy BEFORE Northern - alphabetical!)
+            "Corn - Northern Leaf Blight",           // 10
+            "Grape - Black rot",                     // 11
+            "Grape - Esca (Black Measles)",          // 12
+            "Grape - Healthy",                       // 13 (healthy BEFORE Leaf blight - alphabetical!)
+            "Grape - Leaf blight",                   // 14
+            "Orange - Citrus greening",              // 15
+            "Peach - Bacterial spot",                // 16
+            "Peach - Healthy",                       // 17
+            "Pepper - Bacterial spot",               // 18
+            "Pepper - Healthy",                      // 19
+            "Potato - Early blight",                 // 20
+            "Potato - Healthy",                      // 21 (healthy BEFORE Late - alphabetical!)
+            "Potato - Late blight",                  // 22
+            "Raspberry - Healthy",                   // 23
+            "Soybean - Healthy",                     // 24
+            "Squash - Powdery mildew",               // 25
+            "Strawberry - Healthy",                  // 26 (healthy BEFORE Leaf scorch - alphabetical!)
+            "Strawberry - Leaf scorch",              // 27
+            "Tomato - Bacterial spot",               // 28
+            "Tomato - Early blight",                 // 29
+            "Tomato - Healthy",                      // 30 (healthy BEFORE Late - alphabetical!)
+            "Tomato - Late blight",                  // 31
+            "Tomato - Leaf Mold",                    // 32
+            "Tomato - Septoria leaf spot",           // 33
+            "Tomato - Spider mites",                 // 34
+            "Tomato - Target Spot",                  // 35
+            "Tomato - Mosaic virus",                 // 36 (mosaic BEFORE Yellow - alphabetical!)
+            "Tomato - Yellow Leaf Curl Virus"        // 37
         ];
 
         // DOM elements
