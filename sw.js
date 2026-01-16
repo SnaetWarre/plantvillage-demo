@@ -1,7 +1,7 @@
 // PlantVillage PWA Service Worker
 // Provides offline support by caching the model and assets
 
-const CACHE_NAME = 'plantvillage-v6'; // Added per-channel debug logging
+const CACHE_NAME = 'plantvillage-v7'; // Added logits debugging
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',

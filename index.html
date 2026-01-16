@@ -640,7 +640,14 @@
                 
                 const outputs = await session.run({ image: inputTensor });
                 const logits = outputs.logits.data;
-                const probs = softmax(Array.from(logits));
+                
+                // Debug: log raw logits
+                const logitsArray = Array.from(logits);
+                console.log(`Logits range: [${Math.min(...logitsArray).toFixed(3)}, ${Math.max(...logitsArray).toFixed(3)}]`);
+                console.log(`Logits sum: ${logitsArray.reduce((a, b) => a + b, 0).toFixed(3)}`);
+                console.log(`Top 3 logits:`, logitsArray.map((l, i) => ({i, l})).sort((a, b) => b.l - a.l).slice(0, 3));
+                
+                const probs = softmax(logitsArray);
                 
                 const indexed = probs.map((p, i) => ({ prob: p, idx: i }));
                 indexed.sort((a, b) => b.prob - a.prob);
