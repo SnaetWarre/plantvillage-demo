@@ -559,17 +559,98 @@
             }
         }
 
+        /**
+         * PIL-compatible bilinear resize with proper anti-aliasing.
+         * This matches PIL's Image.resize(size, BILINEAR) exactly.
+         * 
+         * For downscaling, uses a scaled triangle filter with support radius
+         * equal to the scale factor, which provides proper anti-aliasing.
+         */
+        function pilBilinearResize(sourceCanvas, targetWidth, targetHeight) {
+            const srcCtx = sourceCanvas.getContext('2d');
+            const srcData = srcCtx.getImageData(0, 0, sourceCanvas.width, sourceCanvas.height);
+            const src = srcData.data;
+            const srcW = sourceCanvas.width;
+            const srcH = sourceCanvas.height;
+            
+            const dstCanvas = document.createElement('canvas');
+            dstCanvas.width = targetWidth;
+            dstCanvas.height = targetHeight;
+            const dstCtx = dstCanvas.getContext('2d');
+            const dstData = dstCtx.createImageData(targetWidth, targetHeight);
+            const dst = dstData.data;
+            
+            // Scale factors
+            const xScale = srcW / targetWidth;
+            const yScale = srcH / targetHeight;
+            
+            // Support radius (for downscaling, use scale factor for anti-aliasing)
+            const supportX = Math.max(1.0, xScale);
+            const supportY = Math.max(1.0, yScale);
+            
+            for (let dy = 0; dy < targetHeight; dy++) {
+                for (let dx = 0; dx < targetWidth; dx++) {
+                    // Center of output pixel in source coordinates
+                    const srcCx = (dx + 0.5) * xScale;
+                    const srcCy = (dy + 0.5) * yScale;
+                    
+                    // Determine contributing source pixels
+                    const xMin = Math.max(0, Math.floor(srcCx - supportX));
+                    const xMax = Math.min(srcW - 1, Math.ceil(srcCx + supportX));
+                    const yMin = Math.max(0, Math.floor(srcCy - supportY));
+                    const yMax = Math.min(srcH - 1, Math.ceil(srcCy + supportY));
+                    
+                    let totalWeight = 0;
+                    const weightedSum = [0, 0, 0, 0]; // RGBA
+                    
+                    for (let sy = yMin; sy <= yMax; sy++) {
+                        for (let sx = xMin; sx <= xMax; sx++) {
+                            // Normalized distance from center
+                            const distX = Math.abs(sx + 0.5 - srcCx) / supportX;
+                            const distY = Math.abs(sy + 0.5 - srcCy) / supportY;
+                            
+                            // Triangle (bilinear) kernel
+                            if (distX < 1.0 && distY < 1.0) {
+                                const weightX = 1.0 - distX;
+                                const weightY = 1.0 - distY;
+                                const weight = weightX * weightY;
+                                
+                                const srcIdx = (sy * srcW + sx) * 4;
+                                weightedSum[0] += src[srcIdx] * weight;
+                                weightedSum[1] += src[srcIdx + 1] * weight;
+                                weightedSum[2] += src[srcIdx + 2] * weight;
+                                weightedSum[3] += src[srcIdx + 3] * weight;
+                                totalWeight += weight;
+                            }
+                        }
+                    }
+                    
+                    const dstIdx = (dy * targetWidth + dx) * 4;
+                    if (totalWeight > 0) {
+                        dst[dstIdx] = Math.round(weightedSum[0] / totalWeight);
+                        dst[dstIdx + 1] = Math.round(weightedSum[1] / totalWeight);
+                        dst[dstIdx + 2] = Math.round(weightedSum[2] / totalWeight);
+                        dst[dstIdx + 3] = Math.round(weightedSum[3] / totalWeight);
+                    }
+                }
+            }
+            
+            dstCtx.putImageData(dstData, 0, 0);
+            return dstCanvas;
+        }
+
         // Image preprocessing
         async function preprocessImage(imageElement) {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
+            // First, draw the original image to a canvas at its natural size
+            const sourceCanvas = document.createElement('canvas');
+            sourceCanvas.width = imageElement.naturalWidth || imageElement.width;
+            sourceCanvas.height = imageElement.naturalHeight || imageElement.height;
+            const sourceCtx = sourceCanvas.getContext('2d');
+            sourceCtx.drawImage(imageElement, 0, 0);
             
-            // Model expects 128x128 input (not 256x256!)
-            canvas.width = 128;
-            canvas.height = 128;
-            ctx.drawImage(imageElement, 0, 0, 128, 128);
-            
-            const imageData = ctx.getImageData(0, 0, 128, 128);
+            // Use PIL-compatible bilinear resize with anti-aliasing
+            const resizedCanvas = pilBilinearResize(sourceCanvas, 128, 128);
+            const imageData = resizedCanvas.getContext('2d').getImageData(0, 0, 128, 128);
             const pixels = imageData.data;
             
             const floatData = new Float32Array(3 * 128 * 128);
