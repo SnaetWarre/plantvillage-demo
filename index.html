@@ -297,12 +297,7 @@
             color: var(--c-white);
         }
 
-        .result-file {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            margin-top: 4px;
-        }
-
+        
         /* Progress Bar */
         .progress-bar {
             background: var(--bg-surface);
@@ -457,7 +452,6 @@
                     <div>
                         <p class="result-label">Detected</p>
                         <p class="result-class" id="result-class">Loading...</p>
-                        <p class="result-file" id="result-file"></p>
                     </div>
                 </div>
                 <div class="progress-bar">
@@ -542,11 +536,9 @@
         const analyzeBtn = document.getElementById('analyze-btn');
         const loading = document.getElementById('loading');
         const results = document.getElementById('results');
-        const resultFile = document.getElementById('result-file');
 
         let session = null;
         let imageLoaded = false;
-        let loadedFilename = '';
 
         // Initialize ONNX Runtime
         async function initModel() {
@@ -766,7 +758,6 @@
             document.getElementById('result-class').textContent = className;
             document.getElementById('confidence-fill').style.width = confidence + '%';
             document.getElementById('confidence-value').textContent = confidence + '%';
-            resultFile.textContent = loadedFilename ? `Image: ${loadedFilename}` : '';
             
             const predictionsDiv = document.getElementById('top-predictions');
             predictionsDiv.innerHTML = top5.map(p => `
@@ -820,8 +811,6 @@
                 uploadZone.querySelector('.upload-text').style.display = 'none';
                 uploadZone.querySelector('.upload-hint').style.display = 'none';
                 imageLoaded = true;
-                loadedFilename = file?.name || '';
-                resultFile.textContent = '';
                 analyzeBtn.disabled = !session;
             };
             reader.readAsDataURL(file);
