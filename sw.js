@@ -1,7 +1,7 @@
 // PlantVillage PWA Service Worker
 // Provides offline support by caching the model and assets
 
-const CACHE_NAME = 'plantvillage-v9'; 
+const CACHE_NAME = 'plantvillage-v10'; 
 console.log(CACHE_NAME);// Fixed: PIL-compatible bilinear resize with anti-aliasing
 const ASSETS_TO_CACHE = [
     '/',
