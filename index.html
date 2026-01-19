@@ -297,6 +297,12 @@
             color: var(--c-white);
         }
 
+        .result-file {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
         /* Progress Bar */
         .progress-bar {
             background: var(--bg-surface);
@@ -408,7 +414,7 @@
             <div class="status-bar">
                 <div class="status-dot" id="status-dot"></div>
                 <span id="status-text">Loading model...</span>
-                <span id="version-tag" style="margin-left: auto; font-size: 0.7rem; color: var(--text-secondary); opacity: 0.6;">v11</span>
+                <span id="version-tag" style="margin-left: auto; font-size: 0.7rem; color: var(--text-secondary); opacity: 0.6;">v12</span>
             </div>
         </header>
 
@@ -451,6 +457,7 @@
                     <div>
                         <p class="result-label">Detected</p>
                         <p class="result-class" id="result-class">Loading...</p>
+                        <p class="result-file" id="result-file"></p>
                     </div>
                 </div>
                 <div class="progress-bar">
@@ -488,39 +495,39 @@
             "Apple - Cedar apple rust",              // 2
             "Apple - Healthy",                       // 3
             "Blueberry - Healthy",                   // 4
-            "Cherry - Healthy",                      // 5  (healthy BEFORE Powdery - alphabetical!)
-            "Cherry - Powdery mildew",               // 6
+            "Cherry - Powdery mildew",               // 5
+            "Cherry - Healthy",                      // 6
             "Corn - Cercospora leaf spot",           // 7
             "Corn - Common rust",                    // 8
-            "Corn - Healthy",                        // 9  (healthy BEFORE Northern - alphabetical!)
-            "Corn - Northern Leaf Blight",           // 10
+            "Corn - Northern Leaf Blight",           // 9
+            "Corn - Healthy",                        // 10
             "Grape - Black rot",                     // 11
             "Grape - Esca (Black Measles)",          // 12
-            "Grape - Healthy",                       // 13 (healthy BEFORE Leaf blight - alphabetical!)
-            "Grape - Leaf blight",                   // 14
+            "Grape - Leaf blight",                   // 13
+            "Grape - Healthy",                       // 14
             "Orange - Citrus greening",              // 15
             "Peach - Bacterial spot",                // 16
             "Peach - Healthy",                       // 17
             "Pepper - Bacterial spot",               // 18
             "Pepper - Healthy",                      // 19
             "Potato - Early blight",                 // 20
-            "Potato - Healthy",                      // 21 (healthy BEFORE Late - alphabetical!)
-            "Potato - Late blight",                  // 22
+            "Potato - Late blight",                  // 21
+            "Potato - Healthy",                      // 22
             "Raspberry - Healthy",                   // 23
             "Soybean - Healthy",                     // 24
             "Squash - Powdery mildew",               // 25
-            "Strawberry - Healthy",                  // 26 (healthy BEFORE Leaf scorch - alphabetical!)
-            "Strawberry - Leaf scorch",              // 27
+            "Strawberry - Leaf scorch",              // 26
+            "Strawberry - Healthy",                  // 27
             "Tomato - Bacterial spot",               // 28
             "Tomato - Early blight",                 // 29
-            "Tomato - Healthy",                      // 30 (healthy BEFORE Late - alphabetical!)
-            "Tomato - Late blight",                  // 31
-            "Tomato - Leaf Mold",                    // 32
-            "Tomato - Septoria leaf spot",           // 33
-            "Tomato - Spider mites",                 // 34
-            "Tomato - Target Spot",                  // 35
-            "Tomato - Mosaic virus",                 // 36 (mosaic BEFORE Yellow - alphabetical!)
-            "Tomato - Yellow Leaf Curl Virus"        // 37
+            "Tomato - Late blight",                  // 30
+            "Tomato - Leaf Mold",                    // 31
+            "Tomato - Septoria leaf spot",           // 32
+            "Tomato - Spider mites",                 // 33
+            "Tomato - Target Spot",                  // 34
+            "Tomato - Yellow Leaf Curl Virus",       // 35
+            "Tomato - Mosaic virus",                 // 36
+            "Tomato - Healthy"                        // 37
         ];
 
         // DOM elements
@@ -535,9 +542,11 @@
         const analyzeBtn = document.getElementById('analyze-btn');
         const loading = document.getElementById('loading');
         const results = document.getElementById('results');
+        const resultFile = document.getElementById('result-file');
 
         let session = null;
         let imageLoaded = false;
+        let loadedFilename = '';
 
         // Initialize ONNX Runtime
         async function initModel() {
@@ -748,13 +757,16 @@
         function displayResults(top5) {
             const topResult = top5[0];
             const className = CLASS_NAMES[topResult.idx];
-            const confidence = (topResult.prob * 100).toFixed(1);
+            const confidenceValue = topResult.prob * 100;
+            const confidence = confidenceValue.toFixed(1);
             
             const isHealthy = className.toLowerCase().includes('healthy');
-            document.getElementById('result-icon').textContent = isHealthy ? '✅' : '⚠️';
+            const showWarning = !isHealthy && confidenceValue >= 50;
+            document.getElementById('result-icon').textContent = showWarning ? '⚠️' : '✅';
             document.getElementById('result-class').textContent = className;
             document.getElementById('confidence-fill').style.width = confidence + '%';
             document.getElementById('confidence-value').textContent = confidence + '%';
+            resultFile.textContent = loadedFilename ? `Image: ${loadedFilename}` : '';
             
             const predictionsDiv = document.getElementById('top-predictions');
             predictionsDiv.innerHTML = top5.map(p => `
@@ -808,6 +820,8 @@
                 uploadZone.querySelector('.upload-text').style.display = 'none';
                 uploadZone.querySelector('.upload-hint').style.display = 'none';
                 imageLoaded = true;
+                loadedFilename = file?.name || '';
+                resultFile.textContent = '';
                 analyzeBtn.disabled = !session;
             };
             reader.readAsDataURL(file);
